@@ -40,8 +40,8 @@ Log **structs**, **arrays**, **maps**, and **primitive values** directly from Bl
      "project":"MyGame",
      "ts":"2025-10-04T23:25:55.166Z",
      "session":"A1B2C3D4E5F6",
-     "source":"unreal|LevelName",
-     "event":"Struct.Transform",
+     "source":"unreal|BP_LevelName",
+     "event":"Read PLayer Transform",
      "phase":"Startup",
      "data":{"location":{"x":8,"y":16,"z":24},"scale3D":{"x":1.5,"y":1,"z":0.5}}
    }
