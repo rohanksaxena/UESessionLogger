@@ -16,6 +16,7 @@ Log **structs**, **arrays**, **maps**, and **primitive values** directly from Bl
 - Settings panel under Project Settings → Plugins → Session Logger
 - Blueprint-first API: drop-in nodes, no coding needed
 
+[Download the demo project here](https://drive.google.com/file/d/1THopd2BDwNcgILBJnTCoOgJ2pAlSu-Vi/view?usp=sharing) 
 ---
 
 ## 🚀 Quick Start
