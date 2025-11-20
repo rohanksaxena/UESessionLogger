@@ -1,4 +1,4 @@
-# Session Logger (v2.0.0)
+# Session Logger (v2.0.1)
 
 A lightweight **Universal runtime logger** for Unreal Blueprints.
 Log **structs**, **arrays**, **maps**, and **primitive values** directly from Blueprints. No C++ setup required.
@@ -108,7 +108,7 @@ Location: Edit → Project Settings → Plugins → Session Logger
 
 ---
 
-## 🧾 Version 2.0.0 Highlights
+## 🧾 Version 2.0.1 Highlights
 
 - Enum-based Log Message node with color-coded console output
 - Added Custom Label for user-defined log levels
@@ -116,6 +116,7 @@ Location: Edit → Project Settings → Plugins → Session Logger
 - File rotation & retention system added
 - LogEventJson_Object supports direct JsonObject payloads
 - Backward-compatible JSON format for analytics tools
+- Now compatible with Unreal Engine versions 5.4-5.7
 
 ---
 AI Disclosure: This plugin’s code and documentation were authored and reviewed by a human. No AI-generated content or assets are included.
