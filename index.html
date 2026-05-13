@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags -->
+  <title>Session Logger — Structured Blueprint Logging Plugin for Unreal Engine 5</title>
+  <meta name="description" content="Session Logger is a lightweight Blueprint logging plugin for Unreal Engine 5. Log structs, arrays, maps, and primitives to structured JSON Lines files. No C++ required. Works in Editor, PIE, and packaged builds.">
+  <meta name="keywords" content="unreal engine logging plugin, blueprint logging unreal, UE5 logging plugin, unreal engine telemetry, game analytics unreal engine, session logger unreal, JSONL logging unreal, structured logging unreal engine 5, gameplay telemetry plugin, unreal engine blueprint logger">
+  <meta name="author" content="Rohan Krishna Saxena">
+  <link rel="canonical" href="https://rohanksaxena.github.io/UESessionLogger/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Session Logger — Blueprint Logging Plugin for Unreal Engine 5">
+  <meta property="og:description" content="Log anything from your game — scores, events, player stats — directly from Blueprints. Clean structured JSON output. No C++ required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rohanksaxena.github.io/UESessionLogger/">
+  <meta property="og:image" content="https://rohanksaxena.github.io/UESessionLogger/assets/banner.jpg">
+  <meta property="og:site_name" content="Session Logger">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Session Logger — Blueprint Logging Plugin for Unreal Engine 5">
+  <meta name="twitter:description" content="Log structs, arrays, maps and primitives from Blueprints. Structured JSON output. Works in packaged builds.">
+  <meta name="twitter:image" content="https://rohanksaxena.github.io/UESessionLogger/assets/banner.jpg">
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Session Logger",
+    "description": "Lightweight Blueprint logging plugin for Unreal Engine 5. Log structs, arrays, maps, and primitives to structured JSON Lines files.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Windows",
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.fab.com/listings/247d8bc9-9e1d-44d2-a9d5-2497d6baab78",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Rohan Krishna Saxena",
+      "url": "https://github.com/rohanksaxena"
+    },
+    "url": "https://rohanksaxena.github.io/UESessionLogger/",
+    "softwareVersion": "2.0.1",
+    "downloadUrl": "https://www.fab.com/listings/247d8bc9-9e1d-44d2-a9d5-2497d6baab78"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #1e2a3a;
+      --navy-light: #2a3a4e;
+      --navy-dark: #141e2a;
+      --orange: #f97316;
+      --orange-light: #fb923c;
+      --orange-dim: rgba(249,115,22,0.15);
+      --cream: #fdf6ee;
+      --cream-dark: #f5ece0;
+      --text: #1e2a3a;
+      --text-muted: #6b7a8d;
+      --white: #ffffff;
+      --border: rgba(30,42,58,0.12);
+      --code-bg: #1a2433;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(253,246,238,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--navy);
+    }
+
+    .nav-logo-dot {
+      width: 8px; height: 8px;
+      background: var(--orange);
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--navy); }
+
+    .nav-cta {
+      background: var(--orange);
+      color: white !important;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-weight: 600 !important;
+    }
+
+    .nav-cta:hover { background: var(--orange-light); color: white !important; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 4rem;
+      padding: 8rem 6rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--orange-dim);
+      border: 1px solid rgba(249,115,22,0.3);
+      color: var(--orange);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.8rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title span {
+      color: var(--orange);
+    }
+
+    .hero-sub {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--navy);
+      color: white;
+      text-decoration: none;
+      padding: 0.875rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--navy-light);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 0.875rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1.5px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--navy);
+      background: rgba(30,42,58,0.05);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+    }
+
+    .code-window {
+      background: var(--code-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(30,42,58,0.25), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .code-titlebar {
+      background: rgba(255,255,255,0.05);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green { background: #28c840; }
+
+    .code-filename {
+      margin-left: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .code-body {
+      padding: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: #a8b4c4;
+    }
+
+    .code-comment { color: #4a5a6a; }
+    .code-key { color: #7dd3fc; }
+    .code-string { color: #86efac; }
+    .code-number { color: #fbbf24; }
+    .code-bracket { color: #f8b4a0; }
+
+    .floating-tag {
+      position: absolute;
+      background: var(--orange);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(249,115,22,0.4);
+    }
+
+    .tag-1 { top: -16px; right: 40px; }
+    .tag-2 { bottom: 40px; left: -20px; }
+
+    /* SECTION COMMON */
+    section {
+      padding: 5rem 2rem;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* FEATURES */
+    .features { background: white; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: all 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--orange);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(249,115,22,0.1);
+    }
+
+    .feature-icon {
+      width: 40px; height: 40px;
+      background: var(--orange-dim);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* NODES */
+    .nodes { background: var(--cream); }
+
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .node-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .node-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--orange);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .node-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+
+    .node-desc {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* QUICKSTART */
+    .quickstart { background: white; }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 3rem;
+      max-width: 700px;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      position: relative;
+      padding-bottom: 2rem;
+    }
+
+    .step:last-child { padding-bottom: 0; }
+
+    .step-line {
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step:last-child .step-line { display: none; }
+
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--navy);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-content { padding-top: 0.5rem; }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+
+    .step-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .code-inline {
+      font-family: 'DM Mono', monospace;
+      background: var(--code-bg);
+      color: #86efac;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    /* OUTPUT EXAMPLE */
+    .output { background: var(--navy-dark); }
+
+    .output .section-title { color: white; }
+    .output .section-label { color: var(--orange-light); }
+    .output .section-sub { color: rgba(255,255,255,0.5); }
+
+    .output-box {
+      margin-top: 3rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .output-header {
+      background: rgba(255,255,255,0.05);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .output-filename {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .output-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      background: var(--orange-dim);
+      color: var(--orange);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid rgba(249,115,22,0.3);
+    }
+
+    .output-code {
+      padding: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.9;
+      color: #a8b4c4;
+      overflow-x: auto;
+    }
+
+    /* COMPAT */
+    .compat { background: var(--cream); }
+
+    .compat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .compat-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .compat-check {
+      width: 28px; height: 28px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .compat-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--navy);
+    }
+
+    /* CTA */
+    .cta-section {
+      background: var(--navy);
+      text-align: center;
+      padding: 6rem 2rem;
+    }
+
+    .cta-section .section-label { color: var(--orange-light); }
+
+    .cta-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .cta-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--orange);
+      color: white;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .btn-cta-primary:hover {
+      background: var(--orange-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: white;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+
+    .btn-cta-secondary:hover {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy-dark);
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 7rem 2rem 3rem;
+        gap: 3rem;
+      }
+      .hero-visual { order: -1; }
+      .nav-links { display: none; }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-content > * {
+      animation: fadeUp 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-badge { animation-delay: 0.1s; }
+    .hero-title { animation-delay: 0.2s; }
+    .hero-sub { animation-delay: 0.3s; }
+    .hero-actions { animation-delay: 0.4s; }
+    .hero-stats { animation-delay: 0.5s; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    Session Logger
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#nodes">Blueprint Nodes</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+    <li><a href="#output">Output</a></li>
+    <li><a href="https://github.com/rohanksaxena/UESessionLogger/issues">Support</a></li>
+    <li><a href="https://www.fab.com/listings/247d8bc9-9e1d-44d2-a9d5-2497d6baab78" class="nav-cta">Get on Fab →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<main>
+<section style="padding: 0; background: var(--cream);">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>●</span> Unreal Engine 5.4 – 5.7
+      </div>
+      <h1 class="hero-title">
+        Structured logging<br>from <span>Blueprints</span>,<br>zero friction.
+      </h1>
+      <p class="hero-sub">
+        Session Logger lets you emit clean, structured JSON Lines directly from your Blueprints. Log structs, arrays, maps, and primitives in one node. No C++ required.
+      </p>
+      <div class="hero-actions">
+        <a href="https://www.fab.com/listings/247d8bc9-9e1d-44d2-a9d5-2497d6baab78" class="btn-primary">
+          Get on Fab Marketplace →
+        </a>
+        <a href="https://drive.google.com/file/d/1THopd2BDwNcgILBJnTCoOgJ2pAlSu-Vi/view" class="btn-secondary">
+          Download Demo
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">8</span>
+          <span class="stat-label">Log node types</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">4</span>
+          <span class="stat-label">UE versions supported</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">0</span>
+          <span class="stat-label">Dependencies</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="floating-tag tag-1">v2.0.1 — Latest</div>
+      <div class="code-window">
+        <div class="code-titlebar">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <span class="code-filename">MyGame_sessions.jsonl</span>
+        </div>
+        <div class="code-body">
+<span class="code-bracket">{</span><br>
+&nbsp;&nbsp;<span class="code-key">"project"</span>: <span class="code-string">"MyGame"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"ts"</span>: <span class="code-string">"2026-05-10T12:34:56.789Z"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"session"</span>: <span class="code-string">"3CE7...BCD3"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"source"</span>: <span class="code-string">"unreal|L_GameMap"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"event"</span>: <span class="code-string">"PlayerStats"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"phase"</span>: <span class="code-string">"Gameplay"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"data"</span>: <span class="code-bracket">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"score"</span>: <span class="code-number">4200</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"hp"</span>: <span class="code-number">87</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"level"</span>: <span class="code-string">"dungeon_01"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"alive"</span>: <span class="code-number">true</span><br>
+&nbsp;&nbsp;<span class="code-bracket">}</span><br>
+<span class="code-bracket">}</span>
+        </div>
+      </div>
+      <div class="floating-tag tag-2">Blueprint-first API</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <p class="section-label">Features</p>
+    <h2 class="section-title">Everything you need to<br>instrument your game</h2>
+    <p class="section-sub">Built for game developers who want structured, queryable logs without leaving Blueprints or adding SDK dependencies.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Blueprint-First API</div>
+        <p class="feature-desc">Drop-in Blueprint nodes for every data type. Log structs, arrays, maps, and all primitives with dedicated nodes and zero C++ setup.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗂️</div>
+        <div class="feature-title">Structured JSON Lines</div>
+        <p class="feature-desc">Every log line is a compact, valid JSON object. Easy to parse, import into analytics tools, or feed into ELK stacks and spreadsheets.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Flatten Mode</div>
+        <p class="feature-desc">Turn nested structs into dotted key-value pairs (e.g. meta.pos.x = 10) for simple spreadsheet or ELK ingestion.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔁</div>
+        <div class="feature-title">File Rotation & Retention</div>
+        <p class="feature-desc">Configurable file size caps, startup rotation, and automatic cleanup of old log files. Never worry about runaway log sizes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">Color-Coded Console</div>
+        <p class="feature-desc">INFO, WARNING, ERROR and CUSTOM levels with color-coded console echo. Define your own log level labels for domain-specific categories.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Packaged Build Support</div>
+        <p class="feature-desc">Same API and output format in Editor, PIE, Standalone, and fully packaged shipping builds. No special setup needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">No Telemetry</div>
+        <p class="feature-desc">Writes locally to Saved/Logs/ or a custom path. Zero network usage. You own your data completely.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆔</div>
+        <div class="feature-title">Automatic Session ID</div>
+        <p class="feature-desc">A unique session UUID is generated on first init and stamped on every log line. Track and correlate logs across runs effortlessly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <div class="feature-title">Settings Panel</div>
+        <p class="feature-desc">Full configuration via Project Settings → Plugins → Session Logger. Set log path, file name, rotation thresholds, and more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NODES -->
+<section class="nodes" id="nodes">
+  <div class="section-inner">
+    <p class="section-label">Blueprint Nodes</p>
+    <h2 class="section-title">One node for every data type</h2>
+    <p class="section-sub">Every Blueprint type has a dedicated log node. No casting, no workarounds, just drop the node and connect.</p>
+
+    <div class="nodes-grid">
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Message</div>
+          <div class="node-desc">Free-text breadcrumb with INFO / WARNING / ERROR / CUSTOM level</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Struct</div>
+          <div class="node-desc">Serialize any wildcard struct to JSON automatically</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Array</div>
+          <div class="node-desc">Log any wildcard array of primitives or structs</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Map</div>
+          <div class="node-desc">Log any wildcard map as a JSON key-value object</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Int)</div>
+          <div class="node-desc">Log a single integer value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Float)</div>
+          <div class="node-desc">Log a single float value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Bool)</div>
+          <div class="node-desc">Log a boolean value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (String)</div>
+          <div class="node-desc">Log a string value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Name)</div>
+          <div class="node-desc">Log an FName value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Text)</div>
+          <div class="node-desc">Log an FText value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Byte)</div>
+          <div class="node-desc">Log a byte value with event name and phase</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Value (Int64)</div>
+          <div class="node-desc">Safely logged as string to avoid IEEE-754 precision loss</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Log Event (JSON)</div>
+          <div class="node-desc">Raw JSON sink — pass pre-built JSON objects, arrays, or scalars</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Init Logger</div>
+          <div class="node-desc">Initialize the subsystem. Call once on Begin Play</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Get Session ID</div>
+          <div class="node-desc">Returns the unique UUID for the current session</div>
+        </div>
+      </div>
+      <div class="node-card">
+        <div class="node-dot"></div>
+        <div>
+          <div class="node-name">Is Logger Ready</div>
+          <div class="node-desc">Returns true if the subsystem is initialized and ready</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICKSTART -->
+<section class="quickstart" id="quickstart">
+  <div class="section-inner">
+    <p class="section-label">Quick Start</p>
+    <h2 class="section-title">Up and running in minutes</h2>
+    <p class="section-sub">Install from Fab, add two nodes, and your game is logging structured data.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-line"></div>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Install from Fab</div>
+          <p class="step-desc">Purchase and install from the Epic Games Fab Marketplace. Enable the plugin under <strong>Edit → Plugins → Session Logger</strong> and restart the editor.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line"></div>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Initialize the Logger</div>
+          <p class="step-desc">In your Level Blueprint or Game Instance, call <span class="code-inline">Init Logger</span> once on Begin Play. That's all the setup required.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line"></div>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Start Logging</div>
+          <p class="step-desc">Drop any log node — <span class="code-inline">Log Struct</span>, <span class="code-inline">Log Value</span>, <span class="code-inline">Log Message</span> — connect your data and you're done.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line"></div>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Find Your Logs</div>
+          <p class="step-desc">Logs appear at <span class="code-inline">&lt;ProjectRoot&gt;/Saved/Logs/&lt;ProjectName&gt;_sessions.jsonl</span> — one JSON object per line, ready to parse or import.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTPUT -->
+<section class="output" id="output">
+  <div class="section-inner">
+    <p class="section-label">Output Format</p>
+    <h2 class="section-title">Clean, structured, parseable</h2>
+    <p class="section-sub">Every log line is a self-contained JSON object with session metadata automatically attached.</p>
+
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-filename">MyGame_sessions.jsonl</span>
+        <span class="output-badge">JSON Lines</span>
+      </div>
+      <div class="output-code">
+<span class="code-comment">// Log Message node output</span><br>
+<span class="code-bracket">{</span><span class="code-key">"project"</span>:<span class="code-string">"MyGame"</span>, <span class="code-key">"ts"</span>:<span class="code-string">"2026-05-10T12:00:00.000Z"</span>, <span class="code-key">"session"</span>:<span class="code-string">"3CE7...BCD3"</span>, <span class="code-key">"source"</span>:<span class="code-string">"unreal|L_Map"</span>, <span class="code-key">"level"</span>:<span class="code-string">"INFO"</span>, <span class="code-key">"message"</span>:<span class="code-string">"Game started"</span>, <span class="code-key">"phase"</span>:<span class="code-string">"Startup"</span><span class="code-bracket">}</span><br><br>
+<span class="code-comment">// Log Struct node output</span><br>
+<span class="code-bracket">{</span><span class="code-key">"project"</span>:<span class="code-string">"MyGame"</span>, <span class="code-key">"ts"</span>:<span class="code-string">"2026-05-10T12:00:05.123Z"</span>, <span class="code-key">"session"</span>:<span class="code-string">"3CE7...BCD3"</span>, <span class="code-key">"source"</span>:<span class="code-string">"unreal|L_Map"</span>, <span class="code-key">"event"</span>:<span class="code-string">"PlayerStats"</span>, <span class="code-key">"phase"</span>:<span class="code-string">"Gameplay"</span>, <span class="code-key">"data"</span>:<span class="code-bracket">{</span><span class="code-key">"score"</span>:<span class="code-number">4200</span>, <span class="code-key">"hp"</span>:<span class="code-number">87</span>, <span class="code-key">"alive"</span>:<span class="code-number">true</span><span class="code-bracket">}}</span><br><br>
+<span class="code-comment">// Log Value (Int) node output</span><br>
+<span class="code-bracket">{</span><span class="code-key">"project"</span>:<span class="code-string">"MyGame"</span>, <span class="code-key">"ts"</span>:<span class="code-string">"2026-05-10T12:00:10.456Z"</span>, <span class="code-key">"session"</span>:<span class="code-string">"3CE7...BCD3"</span>, <span class="code-key">"source"</span>:<span class="code-string">"unreal|L_Map"</span>, <span class="code-key">"event"</span>:<span class="code-string">"EnemiesKilled"</span>, <span class="code-key">"phase"</span>:<span class="code-string">"Gameplay"</span>, <span class="code-key">"data"</span>:<span class="code-bracket">{</span><span class="code-key">"value"</span>:<span class="code-number">42</span><span class="code-bracket">}}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPATIBILITY -->
+<section class="compat" id="compat">
+  <div class="section-inner">
+    <p class="section-label">Compatibility</p>
+    <h2 class="section-title">Tested across UE versions</h2>
+    <p class="section-sub">Compatible with Unreal Engine 5.4 through 5.7. Windows 64-bit. Source-only plugin with no pre-built binaries.</p>
+
+    <div class="compat-grid">
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">Unreal Engine 5.7</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">Unreal Engine 5.6</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">Unreal Engine 5.5</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">Unreal Engine 5.4</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">Windows 64-bit</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">Packaged Builds</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">PIE & Standalone</span>
+      </div>
+      <div class="compat-card">
+        <div class="compat-check">✓</div>
+        <span class="compat-text">No Dependencies</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-inner" style="text-align: center;">
+    <p class="section-label">Get Started</p>
+    <h2 class="cta-title">Start logging your game today</h2>
+    <p class="cta-sub">Available on the Fab Marketplace. Includes full source, documentation, and a demo project.</p>
+    <div class="cta-buttons">
+      <a href="https://www.fab.com/listings/247d8bc9-9e1d-44d2-a9d5-2497d6baab78" class="btn-cta-primary">
+        Get on Fab Marketplace →
+      </a>
+      <a href="https://github.com/rohanksaxena/UESessionLogger/issues" class="btn-cta-secondary">
+        Report an Issue
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="https://www.fab.com/listings/247d8bc9-9e1d-44d2-a9d5-2497d6baab78">Fab Marketplace</a>
+    <a href="https://github.com/rohanksaxena/UESessionLogger">GitHub</a>
+    <a href="https://github.com/rohanksaxena/UESessionLogger/issues">Support</a>
+    <a href="https://drive.google.com/file/d/1THopd2BDwNcgILBJnTCoOgJ2pAlSu-Vi/view">Demo Project</a>
+    <a href="https://github.com/rohanksaxena">Rohan Krishna Saxena</a>
+  </div>
+  <p class="footer-copy">© 2026 Rohan Krishna Saxena. Session Logger is available on Fab Marketplace.</p>
+</footer>
+
+</body>
+</html>
